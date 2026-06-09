@@ -529,6 +529,7 @@ function updateUsageUI(){
 }
 function logout(){S.user=null;S.token=null;show('s-landing')}
 function dpNav(id,el){
+  if(id==='settings'){setTimeout(loadSavedTokens,50);}
   document.querySelectorAll('.dsb-item').forEach(i=>i.classList.remove('active'));
   document.querySelectorAll('.dpanel').forEach(p=>p.classList.remove('active'));
   if(el)el.classList.add('active');
@@ -622,7 +623,7 @@ async function runAgent(){
   await sleep(300);
   snR(2,'r');skOn('gh');let repoUrl='';let ghUser='';
   if(ghTok&&ghTok.length>8){
-    log('Creando repo "'+repoName+'"...');
+    log('Creando repo "'+repoName+'"...');log('Token: '+ghTok.slice(0,8)+'...','info');
     try{
       const r=await fetch('https://api.github.com/user/repos',{method:'POST',headers:{Authorization:'token '+ghTok,'Content-Type':'application/json'},body:JSON.stringify({name:repoName,description:gen.description,private:false,auto_init:false})});
       const d=await r.json();
@@ -638,7 +639,7 @@ async function runAgent(){
   if(vcTok&&vcTok.length>8){
     log('Desplegando en Vercel...');
     try{
-      const vcF=Object.entries(gen.files||{'index.html':'<h1>'+repoName+'</h1>'}).map(([n,d])=>({file:n,data:String(d),encoding:'utf8'}));
+      const vcF=Object.entries(gen.files||{'index.html':'<h1>'+repoName+'</h1>'}).map(([n,d])=>{const b64=btoa(unescape(encodeURIComponent(String(d))));return{file:n,data:b64,encoding:'base64'};});
       const r=await fetch('https://api.vercel.com/v13/deployments',{method:'POST',headers:{Authorization:'Bearer '+vcTok,'Content-Type':'application/json'},body:JSON.stringify({name:repoName,files:vcF,target:'production',projectSettings:{framework:null}})});
       const d=await r.json();
       if(r.ok&&d.url){deployUrl='https://'+d.url;projectId=d.projectId||'';log('✓ '+deployUrl,'ok');snR(3,'d');}
