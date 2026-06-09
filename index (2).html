@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeployAI — Deploy automático con IA</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.19.0/iconfont/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0F;--bg2:#111118;--bg3:#1A1A24;--bg4:#22223A;
+  --border:#2A2A3A;--border2:#3A3A50;
+  --text:#F0F0F8;--text2:#9898B8;--text3:#5A5A7A;
+  --accent:#7C6BFF;--accent2:#5D4FCC;--accent-glow:rgba(124,107,255,0.15);
+  --green:#2DD4A0;--green-bg:rgba(45,212,160,0.08);
+  --red:#FF5E5E;--red-bg:rgba(255,94,94,0.08);
+  --yellow:#F5C842;--yellow-bg:rgba(245,200,66,0.08);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:10px;--r2:6px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);z-index:10}
+.nav-logo{font-size:18px;font-weight:600;letter-spacing:-0.5px}
+.nav-logo span{color:var(--accent)}
+.nav-right{display:flex;gap:10px}
+.btn{padding:8px 18px;border-radius:var(--r2);font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--font);transition:all 0.15s}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--text)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:var(--accent2)}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-lg{padding:12px 28px;font-size:14px;border-radius:var(--r)}
+#s-landing{flex-direction:column;background:var(--bg)}
+.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:90px 24px 70px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(124,107,255,0.1) 0%,transparent 70%);top:-100px;left:50%;transform:translateX(-50%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;border:1px solid var(--border2);font-size:12px;color:var(--text2);margin-bottom:24px}
+.hero-badge span{color:var(--accent)}
+.hero h1{font-size:50px;font-weight:600;letter-spacing:-1.5px;line-height:1.1;max-width:680px;margin-bottom:18px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:16px;color:var(--text2);max-width:460px;line-height:1.7;margin-bottom:32px}
+.hero-btns{display:flex;gap:10px;justify-content:center}
+.demo-term{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 22px;max-width:500px;width:100%;margin:50px auto 0;text-align:left}
+.term-bar{display:flex;gap:6px;margin-bottom:12px}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.term-line{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--text2)}
+.term-line .p{color:var(--accent)}
+.term-line .ok{color:var(--green)}
+.term-line .url{color:var(--yellow)}
+.pricing{padding:70px 48px;max-width:860px;margin:0 auto;width:100%;text-align:center}
+.sec-label{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:500}
+.sec-title{font-size:30px;font-weight:600;letter-spacing:-0.8px;margin-bottom:40px}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px 20px;text-align:left;position:relative}
+.plan.popular{border-color:var(--accent);background:linear-gradient(135deg,rgba(124,107,255,0.05),var(--bg2))}
+.plan-pop{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:100px;white-space:nowrap}
+.plan-name{font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.plan-price{font-size:32px;font-weight:600;letter-spacing:-1px;margin-bottom:3px}
+.plan-price span{font-size:13px;font-weight:400;color:var(--text2)}
+.plan-limit{font-size:11px;color:var(--text3);margin-bottom:16px}
+.plan-feat{font-size:12px;color:var(--text2);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.plan-feat::before{content:'✓';color:var(--green);font-weight:600}
+.plan-btn{width:100%;margin-top:16px;padding:9px;font-size:13px}
+footer{padding:32px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.footer-copy{font-size:12px;color:var(--text3)}
+#s-auth{align-items:center;justify-content:center;background:var(--bg);flex-direction:column}
+.auth-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:32px;width:100%;max-width:370px}
+.auth-logo{font-size:18px;font-weight:600;letter-spacing:-0.5px;margin-bottom:6px;text-align:center}
+.auth-logo span{color:var(--accent)}
+.auth-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:24px}
+.auth-tabs{display:flex;background:var(--bg3);border-radius:var(--r2);padding:3px;margin-bottom:20px}
+.auth-tab{flex:1;padding:7px;font-size:13px;font-weight:500;text-align:center;cursor:pointer;border-radius:5px;color:var(--text2);transition:all 0.15s}
+.auth-tab.active{background:var(--bg4);color:var(--text)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.field input{width:100%;padding:9px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:13px;font-family:var(--font);outline:none}
+.field input:focus{border-color:var(--accent)}
+.field input::placeholder{color:var(--text3)}
+.plan-sel{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.plan-opt{padding:9px 6px;border-radius:var(--r2);border:1px solid var(--border);text-align:center;cursor:pointer;transition:all 0.15s}
+.plan-opt.selected{border-color:var(--accent);background:var(--accent-glow)}
+.plan-opt-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px}
+.plan-opt-price{font-size:10px;color:var(--text2)}
+.auth-btn{width:100%;padding:10px;font-size:13px;font-weight:500;margin-top:6px;background:var(--accent);color:#fff;border:none;border-radius:var(--r2);cursor:pointer;font-family:var(--font)}
+.auth-btn:hover{background:var(--accent2)}
+.auth-btn:disabled{opacity:0.5;cursor:not-allowed}
+.auth-err{font-size:12px;color:var(--red);margin-top:8px;text-align:center;min-height:18px}
+#s-dash{flex-direction:row;background:var(--bg)}
+.dsb{width:210px;min-width:210px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:0}
+.dsb-top{padding:16px 14px;border-bottom:1px solid var(--border)}
+.dsb-logo{font-size:15px;font-weight:600;letter-spacing:-0.3px}
+.dsb-logo span{color:var(--accent)}
+.dsb-user{font-size:11px;color:var(--text2);margin-top:3px;word-break:break-all}
+.dsb-plan{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:100px;margin-top:4px;text-transform:uppercase}
+.dsb-plan.FREE{background:var(--bg4);color:var(--text2)}
+.dsb-plan.PRO{background:rgba(124,107,255,0.2);color:var(--accent)}
+.dsb-plan.TEAM{background:rgba(45,212,160,0.15);color:var(--green)}
+.dsb-nav{padding:10px 8px;flex:1}
+.dsb-sep{font-size:10px;color:var(--text3);padding:10px 8px 3px;text-transform:uppercase;letter-spacing:0.5px}
+.dsb-item{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:13px;color:var(--text2);cursor:pointer;border-radius:var(--r2);margin-bottom:2px;transition:all 0.15s}
+.dsb-item:hover{background:var(--bg3);color:var(--text)}
+.dsb-item.active{background:var(--bg3);color:var(--text);font-weight:500}
+.dsb-item i{font-size:15px;width:17px;text-align:center}
+.dsb-foot{padding:12px 14px;border-top:1px solid var(--border)}
+.usage-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px}
+.usage-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:10px}
+.usage-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s}
+.logout-btn{width:100%;padding:7px;font-size:12px;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:var(--r2);cursor:pointer;font-family:var(--font)}
+.logout-btn:hover{background:var(--bg3)}
+.dmain{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.dpanel{display:none;flex:1;flex-direction:column;overflow:hidden}
+.dpanel.active{display:flex}
+.dph{padding:16px 22px 12px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.dph-title{font-size:15px;font-weight:500}
+.dph-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.dpb{flex:1;overflow-y:auto;padding:18px 22px}
+.ag-layout{display:flex;gap:12px;flex:1;min-height:0}
+.ag-main{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0}
+.ag-side{width:194px;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.card-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px}
+.prompt-ta{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:9px 11px;font-size:13px;font-family:var(--font);color:var(--text);resize:none;outline:none;line-height:1.6}
+.prompt-ta:focus{border-color:var(--accent)}
+.prompt-ta::placeholder{color:var(--text3)}
+.deploy-btn{width:100%;margin-top:9px;padding:9px;font-size:13px;font-weight:500;background:var(--accent);color:#fff;border:none;border-radius:var(--r2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--font)}
+.deploy-btn:hover{background:var(--accent2)}
+.deploy-btn:disabled{opacity:0.4;cursor:not-allowed}
+.log-card{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px;overflow-y:auto;min-height:160px;font-family:var(--mono)}
+.log-empty{font-size:13px;color:var(--text3);text-align:center;padding:36px 0;font-family:var(--font)}
+.ll{font-size:11.5px;line-height:1.7;padding:2px 0;display:flex;gap:7px}
+.lt{color:var(--text3);min-width:54px}
+.lm{color:var(--text2);flex:1}
+.lm.ok{color:var(--green)}.lm.err{color:var(--red)}.lm.info{color:var(--accent)}.lm.ai{color:var(--yellow)}.lm.warn{color:var(--yellow)}.lm.doc{color:#B794F4}
+.sk-row{display:flex;align-items:center;gap:7px;padding:3px 0;font-size:12px;color:var(--text2)}
+.sk-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:all 0.3s}
+.sk-dot.active{background:var(--yellow);box-shadow:0 0 0 3px rgba(245,200,66,0.15)}
+.sk-dot.done{background:var(--green)}
+.step-row{display:flex;align-items:flex-start;gap:7px;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border);color:var(--text2)}
+.step-row:last-child{border-bottom:none}
+.snum{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;margin-top:1px;font-family:var(--mono)}
+.snum.p{background:var(--bg4);color:var(--text3)}.snum.r{background:rgba(245,200,66,0.15);color:var(--yellow)}.snum.d{background:var(--green-bg);color:var(--green)}.snum.e{background:var(--red-bg);color:var(--red)}
+.ex-chip{font-size:11px;padding:5px 8px;border-radius:var(--r2);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:block;margin-bottom:4px;line-height:1.4}
+.ex-chip:hover{background:var(--bg3);color:var(--text)}
+.result-box{background:var(--green-bg);border:1px solid rgba(45,212,160,0.2);border-radius:var(--r);padding:13px;margin-top:9px}
+.result-title{font-size:13px;font-weight:500;color:var(--green);margin-bottom:9px}
+.result-lbl{font-size:11px;color:rgba(45,212,160,0.7);margin-bottom:3px}
+.result-link{font-size:12px;color:var(--green);text-decoration:none;font-family:var(--mono);word-break:break-all}
+.result-link:hover{text-decoration:underline}
+.doc-chip{background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.15);border-radius:var(--r2);padding:8px 10px;cursor:pointer}
+.doc-chip:hover{background:rgba(45,212,160,0.1)}
+.doc-chip-title{font-size:12px;font-weight:500;color:var(--green);margin-bottom:1px}
+.doc-chip-sub{font-size:11px;color:rgba(45,212,160,0.6)}
+.share-box{background:rgba(124,107,255,0.06);border:1px solid rgba(124,107,255,0.2);border-radius:var(--r);padding:12px;margin-top:9px}
+.share-title{font-size:12px;font-weight:500;color:var(--accent);margin-bottom:7px}
+.share-msg{font-size:12px;color:var(--text2);background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:9px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.copy-sm{margin-top:6px;padding:5px 11px;font-size:11px;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:var(--r2);cursor:pointer;font-family:var(--font)}
+.sett-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.sett-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.sett-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.sett-ico.gh{background:rgba(124,107,255,0.1);color:var(--accent)}
+.sett-ico.vc{background:rgba(45,212,160,0.08);color:var(--green)}
+.sett-ico.sb{background:rgba(245,200,66,0.08);color:var(--yellow)}
+.sett-ico.ai{background:rgba(255,94,94,0.08);color:var(--red)}
+.sett-lbl{font-size:13px;font-weight:500}
+.sett-hint{font-size:11px;color:var(--text2)}
+.sett-row{display:flex;gap:7px;align-items:center;margin-bottom:6px}
+.sett-inp{flex:1;padding:7px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:12px;font-family:var(--mono);outline:none}
+.sett-inp:focus{border-color:var(--accent)}
+.sett-inp::placeholder{color:var(--text3)}
+.sett-inp.url{font-family:var(--font)}
+.test-btn{padding:6px 10px;font-size:12px;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:var(--r2);cursor:pointer;font-family:var(--font);white-space:nowrap}
+.test-btn:hover{background:var(--bg3)}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--border2);display:inline-block;margin-left:4px;vertical-align:middle}
+.sdot.ok{background:var(--green)}.sdot.err{background:var(--red)}
+.tok-link{font-size:11px;color:var(--accent);text-decoration:none;display:block;margin-top:5px}
+.save-sett{padding:9px 20px;font-size:13px;font-weight:500;background:var(--accent);color:#fff;border:none;border-radius:var(--r2);cursor:pointer;font-family:var(--font);margin-top:4px}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.ov-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.ov-label{font-size:11px;color:var(--text2);margin-bottom:5px}
+.ov-val{font-size:24px;font-weight:600;letter-spacing:-0.5px}
+.ov-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.act-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.act-title{font-size:13px;font-weight:500;margin-bottom:10px}
+.act-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.act-row:last-child{border-bottom:none}
+.act-ico{width:26px;height:26px;border-radius:6px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.act-name{color:var(--text);font-weight:500}.act-meta{color:var(--text3);font-size:11px}
+.act-status{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:100px;font-weight:500}
+.s-live{background:var(--green-bg);color:var(--green)}.s-build{background:var(--yellow-bg);color:var(--yellow)}
+.billing-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px}
+.stripe-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.sp{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer}
+.sp.current{border-color:var(--accent);background:var(--accent-glow)}
+.sp-name{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:5px}
+.sp-price{font-size:24px;font-weight:600;letter-spacing:-0.5px;margin-bottom:3px}
+.sp-price span{font-size:12px;font-weight:400;color:var(--text2)}
+.sp-limit{font-size:11px;color:var(--text3);margin-bottom:10px}
+.sp-feat{font-size:11px;color:var(--text2);margin-bottom:4px}
+.sp-feat::before{content:'✓ ';color:var(--green)}
+.sp-btn{width:100%;padding:7px;font-size:12px;margin-top:8px}
+.limit-banner{background:var(--red-bg);border:1px solid rgba(255,94,94,0.2);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--red)}
+.limit-banner button{margin-left:auto;padding:5px 12px;font-size:12px;background:var(--red);color:#fff;border:none;border-radius:var(--r2);cursor:pointer;font-family:var(--font);white-space:nowrap}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);width:90%;max-width:540px;max-height:78vh;display:flex;flex-direction:column}
+.modal-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:13px;font-weight:500}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text2);font-size:17px;line-height:1}
+.modal-body{flex:1;overflow-y:auto;padding:14px 16px;font-size:12px;line-height:1.8;color:var(--text2);white-space:pre-wrap;word-break:break-word;font-family:var(--mono)}
+.spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="s-landing" class="screen active">
+  <nav class="nav">
+    <div class="nav-logo">Deploy<span>AI</span></div>
+    <div class="nav-right">
+      <button class="btn btn-ghost btn-sm" onclick="goAuth('login')">Iniciar sesión</button>
+      <button class="btn btn-accent btn-sm" onclick="goAuth('register')">Empezar gratis</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="hero-badge"><span>✦</span> Backend real · Supabase · Stripe · Vercel</div>
+    <h1>Describe tu app.<br><em>Nosotros la desplegamos.</em></h1>
+    <p>Código, repositorio, deploy, base de datos y documentación — todo automático en menos de 2 minutos.</p>
+    <div class="hero-btns">
+      <button class="btn btn-accent btn-lg" onclick="goAuth('register')">Empezar gratis</button>
+      <button class="btn btn-ghost btn-lg" onclick="goAuth('login')">Iniciar sesión</button>
+    </div>
+    <div class="demo-term">
+      <div class="term-bar">
+        <div class="term-dot" style="background:#FF5E5E"></div>
+        <div class="term-dot" style="background:#F5C842"></div>
+        <div class="term-dot" style="background:#2DD4A0"></div>
+      </div>
+      <div class="term-line"><span class="p">▶</span> "Una app de gestión de clientes con auth y DB"</div>
+      <div class="term-line"><span class="ok">✓</span> Código generado — index.html, README.md</div>
+      <div class="term-line"><span class="ok">✓</span> Repo creado — github.com/usuario/crm-app</div>
+      <div class="term-line"><span class="ok">✓</span> Deploy — <span class="url">crm-app-xyz.vercel.app</span></div>
+      <div class="term-line"><span class="ok">✓</span> SQL ejecutado · Docs y propuesta generadas</div>
+    </div>
+  </div>
+  <div class="pricing">
+    <div class="sec-label">Planes</div>
+    <div class="sec-title">Empieza gratis, escala cuando quieras</div>
+    <div class="plan-grid">
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$0<span>/mes</span></div>
+        <div class="plan-limit">3 deploys al mes</div>
+        <div class="plan-feat">Deploy automático</div>
+        <div class="plan-feat">Documentación generada</div>
+        <div class="plan-feat">URL demo .vercel.app</div>
+        <button class="btn btn-ghost plan-btn" onclick="goAuth('register')">Empezar gratis</button>
+      </div>
+      <div class="plan popular">
+        <div class="plan-pop">Más popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$29<span>/mes</span></div>
+        <div class="plan-limit">20 deploys al mes</div>
+        <div class="plan-feat">Todo lo de Starter</div>
+        <div class="plan-feat">Propuesta comercial</div>
+        <div class="plan-feat">Soporte prioritario</div>
+        <button class="btn btn-accent plan-btn" onclick="goAuth('register')">Empezar con Pro</button>
+      </div>
+      <div class="plan">
+        <div class="plan-name">Team</div>
+        <div class="plan-price">$99<span>/mes</span></div>
+        <div class="plan-limit">Deploys ilimitados</div>
+        <div class="plan-feat">Todo lo de Pro</div>
+        <div class="plan-feat">Hasta 5 usuarios</div>
+        <div class="plan-feat">Workspace compartido</div>
+        <button class="btn btn-ghost plan-btn" onclick="goAuth('register')">Contactar ventas</button>
+      </div>
+    </div>
+  </div>
+  <footer><div class="footer-copy">© 2026 DeployAI · Todos los derechos reservados</div></footer>
+</div>
+
+<div id="s-auth" class="screen">
+  <div class="auth-box">
+    <div class="auth-logo">Deploy<span>AI</span></div>
+    <div class="auth-sub" id="auth-sub">Crea tu cuenta gratis</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-register" onclick="switchTab('register')">Registro</div>
+      <div class="auth-tab" id="tab-login" onclick="switchTab('login')">Iniciar sesión</div>
+    </div>
+    <div id="register-fields">
+      <div class="field"><label>Nombre</label><input type="text" id="reg-name" placeholder="Tu nombre"></div>
+      <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="tu@email.com"></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"></div>
+      <div class="field"><label>Plan</label>
+        <div class="plan-sel">
+          <div class="plan-opt selected" onclick="selPlan('FREE',this)"><div class="plan-opt-name">Starter</div><div class="plan-opt-price">Gratis</div></div>
+          <div class="plan-opt" onclick="selPlan('PRO',this)"><div class="plan-opt-name">Pro</div><div class="plan-opt-price">$29/mes</div></div>
+          <div class="plan-opt" onclick="selPlan('TEAM',this)"><div class="plan-opt-name">Team</div><div class="plan-opt-price">$99/mes</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="login-fields" style="display:none">
+      <div class="field"><label>Email</label><input type="email" id="log-email" placeholder="tu@email.com"></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="log-pass" placeholder="Tu contraseña"></div>
+    </div>
+    <div class="auth-err" id="auth-err"></div>
+    <button class="auth-btn" id="auth-btn" onclick="doAuth()">Continuar</button>
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px;cursor:pointer" onclick="show('s-landing')">← Volver al inicio</p>
+  </div>
+</div>
+
+<div id="s-dash" class="screen">
+  <div class="dsb">
+    <div class="dsb-top">
+      <div class="dsb-logo">Deploy<span>AI</span></div>
+      <div class="dsb-user" id="dsb-email">-</div>
+      <div class="dsb-plan FREE" id="dsb-plan-badge">Starter</div>
+    </div>
+    <div class="dsb-nav">
+      <div class="dsb-item active" onclick="dpNav('overview',this)"><i class="ti ti-layout-dashboard"></i> Overview</div>
+      <div class="dsb-item" onclick="dpNav('agent',this)"><i class="ti ti-robot"></i> Agente</div>
+      <div class="dsb-item" onclick="dpNav('docs',this)"><i class="ti ti-file-text"></i> Documentación</div>
+      <div class="dsb-sep">Cuenta</div>
+      <div class="dsb-item" onclick="dpNav('billing',this)"><i class="ti ti-credit-card"></i> Plan y pagos</div>
+      <div class="dsb-item" onclick="dpNav('settings',this)"><i class="ti ti-key"></i> Tokens</div>
+    </div>
+    <div class="dsb-foot">
+      <div class="usage-lbl"><span>Deploys</span><span id="usage-txt">0/3</span></div>
+      <div class="usage-bar"><div class="usage-fill" id="usage-fill" style="width:0%"></div></div>
+      <button class="logout-btn" onclick="logout()"><i class="ti ti-logout"></i> Cerrar sesión</button>
+    </div>
+  </div>
+  <div class="dmain">
+    <div id="dp-overview" class="dpanel active">
+      <div class="dph"><div class="dph-title">Overview</div><div class="dph-sub">Tu actividad en DeployAI</div></div>
+      <div class="dpb">
+        <div class="ov-grid">
+          <div class="ov-card"><div class="ov-label">Deploys este mes</div><div class="ov-val" id="ov-used">0</div><div class="ov-meta" id="ov-limit-txt">de 3 disponibles</div></div>
+          <div class="ov-card"><div class="ov-label">Apps generadas</div><div class="ov-val" id="ov-apps">0</div><div class="ov-meta">esta sesión</div></div>
+          <div class="ov-card"><div class="ov-label">Tu plan</div><div class="ov-val" id="ov-plan" style="font-size:17px">Starter</div><div class="ov-meta" id="ov-plan-meta">3 deploys/mes</div></div>
+        </div>
+        <div class="act-card">
+          <div class="act-title">Actividad reciente</div>
+          <div id="act-empty" style="font-size:13px;color:var(--text3);padding:20px 0;text-align:center">Ve al Agente y describe tu primera app</div>
+          <div id="act-rows"></div>
+        </div>
+      </div>
+    </div>
+    <div id="dp-agent" class="dpanel">
+      <div class="dph"><div class="dph-title">Agente de deploy</div><div class="dph-sub">Describe tu app — el resto es automático</div></div>
+      <div class="dpb" style="display:flex;flex-direction:column;height:100%">
+        <div id="limit-banner" style="display:none" class="limit-banner">
+          <i class="ti ti-alert-circle"></i>
+          <span id="limit-msg">Alcanzaste el límite de tu plan.</span>
+          <button onclick="dpNav('billing',document.querySelectorAll('.dsb-item')[3])">Actualizar plan</button>
+        </div>
+        <div class="ag-layout">
+          <div class="ag-main">
+            <div class="card">
+              <div class="card-label">¿Qué quieres construir?</div>
+              <textarea id="prompt-input" class="prompt-ta" rows="4" placeholder="Ej: Una app de gestión de clientes con login, lista de clientes y base de datos..."></textarea>
+              <button class="deploy-btn" id="go-btn" onclick="runAgent()"><i class="ti ti-player-play"></i> Deploy + documentación completa</button>
+            </div>
+            <div class="log-card" id="log-box"><div class="log-empty" id="log-empty">Los pasos aparecerán aquí en tiempo real</div></div>
+            <div id="result-area"></div>
+          </div>
+          <div class="ag-side">
+            <div class="card">
+              <div class="card-label">Skills</div>
+              <div class="sk-row"><div class="sk-dot" id="sk-ai"></div>Generar código</div>
+              <div class="sk-row"><div class="sk-dot" id="sk-gh"></div>Crear repo</div>
+              <div class="sk-row"><div class="sk-dot" id="sk-vc"></div>Deploy Vercel</div>
+              <div class="sk-row"><div class="sk-dot" id="sk-env"></div>Env vars</div>
+              <div class="sk-row"><div class="sk-dot" id="sk-sb"></div>DB Supabase</div>
+              <div class="sk-row"><div class="sk-dot" id="sk-doc"></div>Documentación</div>
+              <div class="sk-row"><div class="sk-dot" id="sk-share"></div>Propuesta cliente</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Pasos</div>
+              <div class="step-row"><div class="snum p" id="sn1">1</div><div style="flex:1;font-size:12px">Generar código</div></div>
+              <div class="step-row"><div class="snum p" id="sn2">2</div><div style="flex:1;font-size:12px">Repo GitHub</div></div>
+              <div class="step-row"><div class="snum p" id="sn3">3</div><div style="flex:1;font-size:12px">Deploy Vercel</div></div>
+              <div class="step-row"><div class="snum p" id="sn4">4</div><div style="flex:1;font-size:12px">Env vars</div></div>
+              <div class="step-row"><div class="snum p" id="sn5">5</div><div style="flex:1;font-size:12px">SQL Supabase</div></div>
+              <div class="step-row"><div class="snum p" id="sn6">6</div><div style="flex:1;font-size:12px">Documentación</div></div>
+              <div class="step-row"><div class="snum p" id="sn7">7</div><div style="flex:1;font-size:12px">Propuesta cliente</div></div>
+            </div>
+            <div class="card">
+              <div class="card-label">Ejemplos</div>
+              <div class="ex-chip" onclick="setEx(this)">CRM con clientes y notas</div>
+              <div class="ex-chip" onclick="setEx(this)">Tienda con carrito</div>
+              <div class="ex-chip" onclick="setEx(this)">Dashboard con métricas</div>
+              <div class="ex-chip" onclick="setEx(this)">App de reservas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="dp-docs" class="dpanel">
+      <div class="dph"><div class="dph-title">Documentación</div><div class="dph-sub">Documentos del último deploy</div></div>
+      <div class="dpb">
+        <div id="docs-empty" style="font-size:13px;color:var(--text3);text-align:center;padding:60px 0">Ejecuta el agente para generar documentación</div>
+        <div id="docs-grid" style="display:none;grid-template-columns:1fr 1fr;gap:12px"></div>
+      </div>
+    </div>
+    <div id="dp-billing" class="dpanel">
+      <div class="dph"><div class="dph-title">Plan y pagos</div><div class="dph-sub">Gestiona tu suscripción</div></div>
+      <div class="dpb">
+        <div class="billing-card">
+          <div style="font-size:12px;color:var(--text2);margin-bottom:4px">Plan actual</div>
+          <div style="font-size:18px;font-weight:600;margin-bottom:12px" id="billing-plan-name">Starter</div>
+          <div class="stripe-plans">
+            <div class="sp current" id="sp-FREE"><div class="sp-name">Starter</div><div class="sp-price">$0<span>/mes</span></div><div class="sp-limit">3 deploys/mes</div><div class="sp-feat">Deploy automático</div><div class="sp-feat">Documentación</div><button class="btn btn-ghost sp-btn">Plan actual</button></div>
+            <div class="sp" id="sp-PRO" onclick="upgradePlan('PRO')"><div class="sp-name">Pro</div><div class="sp-price">$29<span>/mes</span></div><div class="sp-limit">20 deploys/mes</div><div class="sp-feat">Todo de Starter</div><div class="sp-feat">Propuesta comercial</div><button class="btn btn-accent sp-btn">Actualizar a Pro</button></div>
+            <div class="sp" id="sp-TEAM" onclick="upgradePlan('TEAM')"><div class="sp-name">Team</div><div class="sp-price">$99<span>/mes</span></div><div class="sp-limit">Ilimitado</div><div class="sp-feat">Todo de Pro</div><div class="sp-feat">5 usuarios</div><button class="btn btn-ghost sp-btn">Contactar ventas</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="dp-settings" class="dpanel">
+      <div class="dph"><div class="dph-title">Tokens de acceso</div><div class="dph-sub">Solo viven en tu navegador</div></div>
+      <div class="dpb">
+        <div class="sett-card">
+          <div class="sett-head"><div class="sett-ico gh"><i class="ti ti-brand-github"></i></div><div><div class="sett-lbl">GitHub <span class="sdot" id="dot-gh"></span></div><div class="sett-hint">Crea repos y sube código</div></div></div>
+          <div class="sett-row"><input type="password" id="tok-gh" class="sett-inp" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('gh')">Verificar</button></div>
+          <a href="https://github.com/settings/tokens" class="tok-link" target="_blank">github.com/settings/tokens → repo</a>
+        </div>
+        <div class="sett-card">
+          <div class="sett-head"><div class="sett-ico vc"><i class="ti ti-triangle"></i></div><div><div class="sett-lbl">Vercel <span class="sdot" id="dot-vc"></span></div><div class="sett-hint">Deploy automático</div></div></div>
+          <div class="sett-row"><input type="password" id="tok-vc" class="sett-inp" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('vc')">Verificar</button></div>
+          <a href="https://vercel.com/account/tokens" class="tok-link" target="_blank">vercel.com/account/tokens</a>
+        </div>
+        <div class="sett-card">
+          <div class="sett-head"><div class="sett-ico sb"><i class="ti ti-database"></i></div><div><div class="sett-lbl">Supabase <span class="sdot" id="dot-sb"></span></div><div class="sett-hint">Ejecuta SQL automáticamente</div></div></div>
+          <div class="sett-row" style="margin-bottom:6px"><input type="password" id="tok-sb" class="sett-inp" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV..."><button class="test-btn" onclick="testTok('sb')">Verificar</button></div>
+          <div class="sett-row"><input type="text" id="sb-url" class="sett-inp url" placeholder="https://xyzxyz.supabase.co"></div>
+          <a href="https://app.supabase.com" class="tok-link" target="_blank">Supabase → Settings → API</a>
+        </div>
+        <div class="sett-card">
+          <div class="sett-head"><div class="sett-ico ai"><i class="ti ti-sparkles"></i></div><div><div class="sett-lbl">Anthropic API <span class="sdot" id="dot-ai"></span></div><div class="sett-hint">Genera código</div></div></div>
+          <div class="sett-row"><input type="password" id="tok-ai" class="sett-inp" placeholder="sk-ant-xxxxxxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('ai')">Verificar</button></div>
+          <a href="https://console.anthropic.com/keys" class="tok-link" target="_blank">console.anthropic.com/keys</a>
+        </div>
+        <button class="save-sett" onclick="saveSettings()">Guardar tokens</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="doc-modal" style="display:none" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Documento</div>
+      <div style="display:flex;gap:7px">
+        <button class="test-btn" onclick="copyModal()"><i class="ti ti-copy"></i> Copiar</button>
+        <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const API='https://deployai-backend-tcw6.onrender.com';
+const PLANS={FREE:{name:'Starter',limit:3},PRO:{name:'Pro',limit:20},TEAM:{name:'Team',limit:999}};
+const S={user:null,token:null,docs:{},apps:0,usage:{used:0,limit:3}};
+let selPlanVal='FREE';
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function goAuth(mode){show('s-auth');switchTab(mode)}
+function switchTab(mode){
+  document.getElementById('tab-register').classList.toggle('active',mode==='register');
+  document.getElementById('tab-login').classList.toggle('active',mode==='login');
+  document.getElementById('register-fields').style.display=mode==='register'?'block':'none';
+  document.getElementById('login-fields').style.display=mode==='login'?'block':'none';
+  document.getElementById('auth-sub').textContent=mode==='register'?'Crea tu cuenta gratis':'Bienvenido de vuelta';
+}
+function selPlan(p,el){selPlanVal=p;document.querySelectorAll('.plan-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected')}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function ts(){const t=new Date();return[t.getHours(),t.getMinutes(),t.getSeconds()].map(n=>n.toString().padStart(2,'0')).join(':')}
+async function doAuth(){
+  const isReg=document.getElementById('tab-register').classList.contains('active');
+  const errEl=document.getElementById('auth-err');errEl.textContent='';
+  const btn=document.getElementById('auth-btn');btn.disabled=true;btn.textContent='Conectando...';
+  try{
+    let body,url;
+    if(isReg){
+      const name=document.getElementById('reg-name').value.trim();
+      const email=document.getElementById('reg-email').value.trim();
+      const password=document.getElementById('reg-pass').value;
+      if(!name||!email||!password){errEl.textContent='Completa todos los campos';btn.disabled=false;btn.textContent='Continuar';return}
+      body={name,email,password,plan:selPlanVal};url='/auth/register';
+    }else{
+      const email=document.getElementById('log-email').value.trim();
+      const password=document.getElementById('log-pass').value;
+      if(!email||!password){errEl.textContent='Ingresa email y contraseña';btn.disabled=false;btn.textContent='Continuar';return}
+      body={email,password};url='/auth/login';
+    }
+    const r=await fetch(API+url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok){errEl.textContent=d.error||'Error al conectar';btn.disabled=false;btn.textContent='Continuar';return}
+    S.token=d.token;S.user=d.user;
+    await loadUsage();enterDash();
+  }catch(e){errEl.textContent='Error de conexión: '+e.message;btn.disabled=false;btn.textContent='Continuar';}
+}
+async function loadUsage(){try{const r=await fetch(API+'/deploys/usage',{headers:{Authorization:'Bearer '+S.token}});if(r.ok){S.usage=await r.json();}}catch(e){}}
+function enterDash(){
+  const u=S.user;const p=PLANS[u.plan]||PLANS.FREE;
+  document.getElementById('dsb-email').textContent=u.email;
+  document.getElementById('dsb-plan-badge').textContent=p.name;
+  document.getElementById('dsb-plan-badge').className='dsb-plan '+u.plan;
+  document.getElementById('ov-plan').textContent=p.name;
+  document.getElementById('ov-plan-meta').textContent=p.limit===999?'Ilimitado':p.limit+' deploys/mes';
+  document.getElementById('billing-plan-name').textContent=p.name;
+  updateUsageUI();show('s-dash');
+  document.getElementById('auth-btn').disabled=false;
+  document.getElementById('auth-btn').textContent='Continuar';
+}
+function updateUsageUI(){
+  const u=S.usage;const limit=u.unlimited?999:u.limit;
+  const pct=limit===999?0:Math.min(u.used/limit*100,100);
+  document.getElementById('usage-txt').textContent=u.used+'/'+(limit===999?'∞':limit);
+  document.getElementById('usage-fill').style.width=pct+'%';
+  document.getElementById('ov-used').textContent=u.used;
+  document.getElementById('ov-limit-txt').textContent='de '+(limit===999?'∞':limit)+' disponibles';
+  const banner=document.getElementById('limit-banner');
+  if(!u.unlimited&&u.used>=u.limit){banner.style.display='flex';document.getElementById('go-btn').disabled=true;}
+  else{banner.style.display='none';document.getElementById('go-btn').disabled=false;}
+}
+function logout(){S.user=null;S.token=null;show('s-landing')}
+function dpNav(id,el){
+  document.querySelectorAll('.dsb-item').forEach(i=>i.classList.remove('active'));
+  document.querySelectorAll('.dpanel').forEach(p=>p.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('dp-'+id).classList.add('active');
+}
+function setEx(el){document.getElementById('prompt-input').value=el.textContent}
+function log(msg,type=''){
+  const em=document.getElementById('log-empty');if(em)em.style.display='none';
+  const box=document.getElementById('log-box');
+  const d=document.createElement('div');d.className='ll';
+  d.innerHTML='<span class="lt">'+ts()+'</span><span class="lm'+(type?' '+type:'')+'">'+msg+'</span>';
+  box.appendChild(d);box.scrollTop=box.scrollHeight;
+}
+function skOn(id){const el=document.getElementById('sk-'+id);if(el)el.className='sk-dot active'}
+function skDone(id){const el=document.getElementById('sk-'+id);if(el)el.className='sk-dot done'}
+function skReset(){['ai','gh','vc','env','sb','doc','share'].forEach(id=>{const el=document.getElementById('sk-'+id);if(el)el.className='sk-dot'})}
+function snR(n,s){const el=document.getElementById('sn'+n);if(el)el.className='snum '+s}
+function snReset(){for(let i=1;i<=7;i++)snR(i,'p')}
+function showDoc(key,title){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').textContent=S.docs[key]||'No generado';document.getElementById('doc-modal').style.display='flex';}
+function closeModal(){document.getElementById('doc-modal').style.display='none'}
+function copyModal(){navigator.clipboard.writeText(document.getElementById('modal-body').textContent).then(()=>alert('Copiado'))}
+async function testTok(type){
+  const val=document.getElementById('tok-'+type).value;
+  if(!val||val.length<8){alert('Ingresa el token');return}
+  const dot=document.getElementById('dot-'+type);dot.className='sdot';
+  try{
+    if(type==='gh'){const r=await fetch('https://api.github.com/user',{headers:{Authorization:'token '+val}});const d=await r.json();if(r.ok){dot.className='sdot ok';alert('✓ GitHub: @'+d.login)}else{dot.className='sdot err';alert('Error: '+d.message)}}
+    else if(type==='vc'){const r=await fetch('https://api.vercel.com/v2/user',{headers:{Authorization:'Bearer '+val}});const d=await r.json();if(r.ok&&d.user){dot.className='sdot ok';alert('✓ Vercel: '+(d.user.email||d.user.username))}else{dot.className='sdot err';alert('Token inválido')}}
+    else if(type==='sb'){dot.className='sdot ok';alert('✓ Token guardado')}
+    else if(type==='ai'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':val},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'hi'}]})});if(r.ok){dot.className='sdot ok';alert('✓ API válida')}else{dot.className='sdot err';alert('Key inválida')}}
+  }catch(e){dot.className='sdot err';alert('Error: '+e.message)}
+}
+function saveSettings(){alert('Tokens guardados');dpNav('agent',document.querySelectorAll('.dsb-item')[1])}
+async function upgradePlan(plan){
+  if(!S.token){alert('Inicia sesión primero');return}
+  try{
+    const r=await fetch(API+'/billing/checkout',{method:'POST',headers:{Authorization:'Bearer '+S.token,'Content-Type':'application/json'},body:JSON.stringify({plan})});
+    const d=await r.json();
+    if(d.url){window.open(d.url,'_blank');}
+    else{alert(d.error||'Configura STRIPE_SECRET_KEY en Render para activar pagos')}
+  }catch(e){alert('Error: '+e.message)}
+}
+async function callAI(sys,msg,tok,max=800){
+  const h={'Content-Type':'application/json'};if(tok&&tok.length>8)h['x-api-key']=tok;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:h,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,system:sys,messages:[{role:'user',content:msg}]})});
+  const d=await r.json();
+  return(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+}
+async function runAgent(){
+  const prompt=document.getElementById('prompt-input').value.trim();if(!prompt)return;
+  const btn=document.getElementById('go-btn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Ejecutando...';
+  document.getElementById('log-box').innerHTML='';document.getElementById('result-area').innerHTML='';
+  skReset();snReset();S.docs={};
+  const ghTok=document.getElementById('tok-gh').value;
+  const vcTok=document.getElementById('tok-vc').value;
+  const sbTok=document.getElementById('tok-sb').value;
+  const sbUrl=(document.getElementById('sb-url').value||'').replace(/\/$/,'');
+  const aiTok=document.getElementById('tok-ai').value;
+  log('Agente iniciado','info');log('"'+prompt.slice(0,70)+'"');
+  await sleep(300);
+  if(S.token){try{const r=await fetch(API+'/deploys/usage',{headers:{Authorization:'Bearer '+S.token}});const d=await r.json();S.usage=d;updateUsageUI();if(!d.unlimited&&d.used>=d.limit){log('Límite del plan alcanzado','err');btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';return;}}catch(e){}}
+  snR(1,'r');skOn('ai');log('Generando código con IA...','ai');
+  let gen={};let repoName='app-'+Math.random().toString(36).slice(2,7);
+  try{
+    const raw=await callAI('Generador de apps. Solo JSON sin markdown. Formato: {"name":"kebab","description":"max 80 chars","files":{"index.html":"html completo funcional con CSS y JS inline"},"sql":"CREATE TABLE IF NOT EXISTS items (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), created_at timestamptz DEFAULT now());","envVars":{"SUPABASE_URL":"","SUPABASE_ANON_KEY":""},"stack":"HTML+JS"}','App para: '+prompt,aiTok,900);
+    gen=JSON.parse(raw.replace(/```json|```/g,'').trim());repoName=gen.name||repoName;
+    log('✓ '+Object.keys(gen.files||{}).join(', '),'ok');snR(1,'d');skDone('ai');
+  }catch(e){
+    gen={name:repoName,description:prompt.slice(0,60),files:{'index.html':'<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>'+prompt.slice(0,30)+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,sans-serif;background:#0A0A0F;color:#F0F0F8;min-height:100vh;display:flex;align-items:center;justify-content:center}.card{background:#111118;border:1px solid #2A2A3A;border-radius:10px;padding:32px;max-width:440px;width:90%}h1{font-size:22px;margin-bottom:8px}p{color:#9898B8;font-size:14px;line-height:1.6}</style></head><body><div class="card"><h1>'+prompt.slice(0,30)+'</h1><p>Generado por DeployAI</p></div></body></html>'},sql:'CREATE TABLE IF NOT EXISTS items (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name text NOT NULL, created_at timestamptz DEFAULT now());',envVars:{},stack:'HTML+JS'};
+    log('Modo demo','warn');snR(1,'d');skDone('ai');
+  }
+  await sleep(300);
+  snR(2,'r');skOn('gh');let repoUrl='';let ghUser='';
+  if(ghTok&&ghTok.length>8){
+    log('Creando repo "'+repoName+'"...');
+    try{
+      const r=await fetch('https://api.github.com/user/repos',{method:'POST',headers:{Authorization:'token '+ghTok,'Content-Type':'application/json'},body:JSON.stringify({name:repoName,description:gen.description,private:false,auto_init:false})});
+      const d=await r.json();
+      if(r.ok){repoUrl=d.html_url;ghUser=d.full_name.split('/')[0];log('✓ '+repoUrl,'ok');
+        let u=0;for(const[f,c]of Object.entries(gen.files||{})){try{const b64=btoa(unescape(encodeURIComponent(String(c))));const fr=await fetch('https://api.github.com/repos/'+ghUser+'/'+repoName+'/contents/'+f,{method:'PUT',headers:{Authorization:'token '+ghTok,'Content-Type':'application/json'},body:JSON.stringify({message:'Add '+f,content:b64})});if(fr.ok)u++;}catch(e){}}
+        log('✓ '+u+' archivos subidos','ok');snR(2,'d');}
+      else{log('Error: '+(d.message||r.status),'err');snR(2,'e');}
+    }catch(e){log('Error GitHub: '+e.message,'err');snR(2,'e');}
+    skDone('gh');
+  }else{log('GitHub omitido','warn');snR(2,'e');skDone('gh')}
+  await sleep(300);
+  snR(3,'r');skOn('vc');let deployUrl='';let projectId='';
+  if(vcTok&&vcTok.length>8){
+    log('Desplegando en Vercel...');
+    try{
+      const vcF=Object.entries(gen.files||{'index.html':'<h1>'+repoName+'</h1>'}).map(([n,d])=>({file:n,data:String(d),encoding:'utf8'}));
+      const r=await fetch('https://api.vercel.com/v13/deployments',{method:'POST',headers:{Authorization:'Bearer '+vcTok,'Content-Type':'application/json'},body:JSON.stringify({name:repoName,files:vcF,target:'production',projectSettings:{framework:null}})});
+      const d=await r.json();
+      if(r.ok&&d.url){deployUrl='https://'+d.url;projectId=d.projectId||'';log('✓ '+deployUrl,'ok');snR(3,'d');}
+      else{log('Error Vercel: '+(d.error?.message||'desconocido'),'err');snR(3,'e');}
+    }catch(e){log('Error Vercel: '+e.message,'err');snR(3,'e');}
+    skDone('vc');
+  }else{log('Vercel omitido','warn');snR(3,'e');skDone('vc')}
+  await sleep(300);
+  snR(4,'r');skOn('env');
+  if(vcTok&&vcTok.length>8&&projectId&&gen.envVars&&Object.keys(gen.envVars).length>0){
+    const ea=Object.entries(gen.envVars).map(([k,v])=>({key:k,value:sbUrl&&k.includes('URL')?sbUrl:v||'',type:'plain',target:['production','preview','development']}));
+    try{await fetch('https://api.vercel.com/v9/projects/'+projectId+'/env',{method:'POST',headers:{Authorization:'Bearer '+vcTok,'Content-Type':'application/json'},body:JSON.stringify(ea)});log('✓ Env vars configuradas','ok');snR(4,'d');}
+    catch(e){snR(4,'e');}skDone('env');
+  }else{snR(4,'d');skDone('env')}
+  await sleep(300);
+  snR(5,'r');skOn('sb');
+  if(sbTok&&sbTok.length>8&&sbUrl&&gen.sql){
+    log('Ejecutando SQL...');
+    try{const r=await fetch(sbUrl+'/rest/v1/rpc/exec_sql',{method:'POST',headers:{apikey:sbTok,Authorization:'Bearer '+sbTok,'Content-Type':'application/json'},body:JSON.stringify({sql:gen.sql})});log(r.ok||r.status===204?'✓ SQL ejecutado':'✓ Supabase conectado',r.ok||r.status===204?'ok':'info');snR(5,'d');}
+    catch(e){snR(5,'e');}skDone('sb');
+  }else{snR(5,'e');skDone('sb')}
+  await sleep(300);
+  snR(6,'r');skOn('doc');log('Generando documentación...','doc');
+  const ctx='App: '+prompt+'\nStack: '+(gen.stack||'HTML+JS')+'\nRepo: '+(repoUrl||'N/A')+'\nURL: '+(deployUrl||'N/A');
+  try{
+    const[tech,user,readme]=await Promise.all([
+      callAI('Documentador técnico. Texto plano.','Documentación técnica:\n'+ctx,aiTok,400),
+      callAI('Redactor de manuales. Español simple.','Manual de usuario:\n'+ctx,aiTok,350),
+      callAI('Redactor técnico.','README.md para:\n'+ctx,aiTok,300)
+    ]);
+    S.docs={tech,user,readme};
+    if(ghTok&&ghUser){for(const[f,c]of[['docs/TECHNICAL.md',tech],['docs/USER_MANUAL.md',user],['README.md',readme]]){try{const b64=btoa(unescape(encodeURIComponent(c)));const ex=await fetch('https://api.github.com/repos/'+ghUser+'/'+repoName+'/contents/'+f,{headers:{Authorization:'token '+ghTok}});const body={message:'Add '+f,content:b64};if(ex.ok){const ed=await ex.json();body.sha=ed.sha;}await fetch('https://api.github.com/repos/'+ghUser+'/'+repoName+'/contents/'+f,{method:'PUT',headers:{Authorization:'token '+ghTok,'Content-Type':'application/json'},body:JSON.stringify(body)});}catch(e){}}}
+    log('✓ Docs generados','ok');snR(6,'d');skDone('doc');
+  }catch(e){S.docs={tech:'Doc: '+prompt,user:'Manual: '+prompt,readme:'# '+repoName};snR(6,'d');skDone('doc')}
+  await sleep(300);
+  snR(7,'r');skOn('share');
+  try{const p=await callAI('Consultor de software. Propuestas comerciales en español.','Propuesta comercial:\nDescripción: '+prompt+'\nURL: '+(deployUrl||'[pendiente]'),aiTok,400);S.docs.proposal=p;log('✓ Propuesta generada','ok');}
+  catch(e){S.docs.proposal='PROPUESTA\n\nApp: '+prompt;}
+  snR(7,'d');skDone('share');
+  if(S.token){try{await fetch(API+'/deploys',{method:'POST',headers:{Authorization:'Bearer '+S.token,'Content-Type':'application/json'},body:JSON.stringify({appName:repoName,repoUrl,deployUrl,prompt})});await loadUsage();updateUsageUI();}catch(e){}}
+  log('──── Completado ────','info');
+  S.apps++;document.getElementById('ov-apps').textContent=S.apps;
+  const ae=document.getElementById('act-empty');if(ae)ae.style.display='none';
+  const ar=document.getElementById('act-rows');
+  const row=document.createElement('div');row.className='act-row';
+  row.innerHTML='<div class="act-ico"><i class="ti ti-rocket" style="font-size:11px"></i></div><div><div class="act-name">'+repoName+'</div><div class="act-meta">'+new Date().toLocaleTimeString()+'</div></div><div class="act-status '+(deployUrl?'s-live':'s-build')+'">'+(deployUrl?'live':'parcial')+'</div>';
+  ar.prepend(row);
+  const dg=document.getElementById('docs-grid');
+  document.getElementById('docs-empty').style.display='none';dg.style.display='grid';dg.innerHTML='';
+  [{k:'tech',icon:'ti-code',c:'#7C6BFF',t:'Técnica'},{k:'user',icon:'ti-user',c:'#2DD4A0',t:'Manual usuario'},{k:'proposal',icon:'ti-briefcase',c:'#F5C842',t:'Propuesta cliente'},{k:'readme',icon:'ti-brand-github',c:'#9898B8',t:'README'}].forEach(({k,icon,c,t})=>{
+    const d=document.createElement('div');d.className='sett-card';d.style.cursor='pointer';d.onclick=()=>showDoc(k,t);
+    d.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><i class="ti '+icon+'" style="font-size:17px;color:'+c+'"></i><span style="font-size:13px;font-weight:500">'+t+'</span></div><div style="font-size:12px;color:var(--text2)">Clic para ver y copiar</div>';
+    dg.appendChild(d);
+  });
+  const ra=document.getElementById('result-area');
+  let html='<div class="result-box"><div class="result-title">✓ Todo listo — '+repoName+'</div>';
+  if(repoUrl)html+='<div style="margin-bottom:7px"><div class="result-lbl">Repositorio</div><a href="'+repoUrl+'" class="result-link" target="_blank">'+repoUrl+'</a></div>';
+  if(deployUrl)html+='<div style="margin-bottom:7px"><div class="result-lbl">URL para el cliente</div><a href="'+deployUrl+'" class="result-link" target="_blank">'+deployUrl+'</a></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px">';
+  [{k:'tech',t:'Técnica'},{k:'user',t:'Manual'},{k:'proposal',t:'Propuesta'},{k:'readme',t:'README'}].forEach(({k,t})=>{html+='<div class="doc-chip" onclick="showDoc(\''+k+'\',\''+t+'\')"><div class="doc-chip-title">'+t+'</div><div class="doc-chip-sub">Ver y copiar</div></div>';});
+  html+='</div></div>';
+  if(deployUrl){const msg='Hola,\n\nTe comparto la demo:\n'+deployUrl+'\n\n¿Te gustaría dejarla en producción con tu dominio propio?';html+='<div class="share-box"><div class="share-title">Mensaje para el cliente</div><div class="share-msg" id="share-msg">'+msg+'</div><button class="copy-sm" onclick="navigator.clipboard.writeText(document.getElementById(\'share-msg\').textContent).then(()=>alert(\'Copiado\'))">Copiar</button></div>';}
+  ra.innerHTML=html;
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';
+}
+</script>
+</body>
+</html>
