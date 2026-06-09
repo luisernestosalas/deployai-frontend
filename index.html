@@ -514,7 +514,7 @@ function enterDash(){
   document.getElementById('billing-plan-name').textContent=p.name;
   updateUsageUI();show('s-dash');
   document.getElementById('auth-btn').disabled=false;
-  document.getElementById('auth-btn').textContent='Continuar';
+  document.getElementById('auth-btn').textContent='Continuar';setTimeout(loadSavedTokens,200);
 }
 function updateUsageUI(){
   const u=S.usage;const limit=u.unlimited?999:u.limit;
@@ -561,7 +561,25 @@ async function testTok(type){
     else if(type==='ai'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':val},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'hi'}]})});if(r.ok){dot.className='sdot ok';alert('✓ API válida')}else{dot.className='sdot err';alert('Key inválida')}}
   }catch(e){dot.className='sdot err';alert('Error: '+e.message)}
 }
-function saveSettings(){alert('Tokens guardados');dpNav('agent',document.querySelectorAll('.dsb-item')[1])}
+function saveSettings(){
+  localStorage.setItem('dai_gh',document.getElementById('tok-gh').value);
+  localStorage.setItem('dai_vc',document.getElementById('tok-vc').value);
+  localStorage.setItem('dai_sb',document.getElementById('tok-sb').value);
+  localStorage.setItem('dai_sburl',document.getElementById('sb-url').value);
+  localStorage.setItem('dai_ai',document.getElementById('tok-ai').value);
+  alert('✓ Tokens guardados permanentemente');
+  dpNav('agent',document.querySelectorAll('.dsb-item')[1]);
+}
+function loadSavedTokens(){
+  const gh=localStorage.getItem('dai_gh');const vc=localStorage.getItem('dai_vc');
+  const sb=localStorage.getItem('dai_sb');const sburl=localStorage.getItem('dai_sburl');
+  const ai=localStorage.getItem('dai_ai');
+  if(gh)document.getElementById('tok-gh').value=gh;
+  if(vc)document.getElementById('tok-vc').value=vc;
+  if(sb)document.getElementById('tok-sb').value=sb;
+  if(sburl)document.getElementById('sb-url').value=sburl;
+  if(ai)document.getElementById('tok-ai').value=ai;
+}
 async function upgradePlan(plan){
   if(!S.token){alert('Inicia sesión primero');return}
   try{
