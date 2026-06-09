@@ -591,6 +591,15 @@ async function upgradePlan(plan){
   }catch(e){alert('Error: '+e.message)}
 }
 async function callAI(sys,msg,tok,max=800){
+  // Use backend proxy to avoid CORS
+  if(S.token){
+    try{
+      const r=await fetch(API+'/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+S.token,'Content-Type':'application/json'},body:JSON.stringify({system:sys,message:msg,max_tokens:max})});
+      const d=await r.json();
+      return(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    }catch(e){console.log('Backend AI failed, trying direct:',e);}
+  }
+  // Fallback: direct call with user's key
   const h={'Content-Type':'application/json'};if(tok&&tok.length>8)h['x-api-key']=tok;
   const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:h,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,system:sys,messages:[{role:'user',content:msg}]})});
   const d=await r.json();
