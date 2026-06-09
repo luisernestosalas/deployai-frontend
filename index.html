@@ -602,11 +602,11 @@ async function runAgent(){
   btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Ejecutando...';
   document.getElementById('log-box').innerHTML='';document.getElementById('result-area').innerHTML='';
   skReset();snReset();S.docs={};
-  const ghTok=document.getElementById('tok-gh').value;
-  const vcTok=document.getElementById('tok-vc').value;
-  const sbTok=document.getElementById('tok-sb').value;
-  const sbUrl=(document.getElementById('sb-url').value||'').replace(/\/$/,'');
-  const aiTok=document.getElementById('tok-ai').value;
+  const ghTok=localStorage.getItem('dai_gh')||document.getElementById('tok-gh').value;
+  const vcTok=localStorage.getItem('dai_vc')||document.getElementById('tok-vc').value;
+  const sbTok=localStorage.getItem('dai_sb')||document.getElementById('tok-sb').value;
+  const sbUrl=(localStorage.getItem('dai_sburl')||document.getElementById('sb-url').value||'').replace(/\/$/,'');
+  const aiTok=localStorage.getItem('dai_ai')||document.getElementById('tok-ai').value;
   log('Agente iniciado','info');log('"'+prompt.slice(0,70)+'"');
   await sleep(300);
   if(S.token){try{const r=await fetch(API+'/deploys/usage',{headers:{Authorization:'Bearer '+S.token}});const d=await r.json();S.usage=d;updateUsageUI();if(!d.unlimited&&d.used>=d.limit){log('Límite del plan alcanzado','err');btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';return;}}catch(e){}}
@@ -704,15 +704,7 @@ async function runAgent(){
   if(deployUrl){const msg='Hola,\n\nTe comparto la demo:\n'+deployUrl+'\n\n¿Te gustaría dejarla en producción con tu dominio propio?';html+='<div class="share-box"><div class="share-title">Mensaje para el cliente</div><div class="share-msg" id="share-msg">'+msg+'</div><button class="copy-sm" onclick="navigator.clipboard.writeText(document.getElementById(\'share-msg\').textContent).then(()=>alert(\'Copiado\'))">Copiar</button></div>';}
   ra.innerHTML=html;
   btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';
-}// Auto-load tokens on page load
-window.addEventListener('load', function(){
-  ['gh','vc','sb','ai'].forEach(k=>{
-    const v=localStorage.getItem('dai_'+k);
-    if(v)document.getElementById('tok-'+k).value=v;
-  });
-  const u=localStorage.getItem('dai_sburl');
-  if(u)document.getElementById('sb-url').value=u;
-});
+}
 </script>
 </body>
 </html>
