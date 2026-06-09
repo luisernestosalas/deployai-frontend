@@ -704,7 +704,15 @@ async function runAgent(){
   if(deployUrl){const msg='Hola,\n\nTe comparto la demo:\n'+deployUrl+'\n\n¿Te gustaría dejarla en producción con tu dominio propio?';html+='<div class="share-box"><div class="share-title">Mensaje para el cliente</div><div class="share-msg" id="share-msg">'+msg+'</div><button class="copy-sm" onclick="navigator.clipboard.writeText(document.getElementById(\'share-msg\').textContent).then(()=>alert(\'Copiado\'))">Copiar</button></div>';}
   ra.innerHTML=html;
   btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';
-}
+}// Auto-load tokens on page load
+window.addEventListener('load', function(){
+  ['gh','vc','sb','ai'].forEach(k=>{
+    const v=localStorage.getItem('dai_'+k);
+    if(v)document.getElementById('tok-'+k).value=v;
+  });
+  const u=localStorage.getItem('dai_sburl');
+  if(u)document.getElementById('sb-url').value=u;
+});
 </script>
 </body>
 </html>
