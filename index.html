@@ -514,7 +514,7 @@ function enterDash(){
   document.getElementById('billing-plan-name').textContent=p.name;
   updateUsageUI();show('s-dash');
   document.getElementById('auth-btn').disabled=false;
-  document.getElementById('auth-btn').textContent='Continuar';setTimeout(loadSavedTokens,200);
+  document.getElementById('auth-btn').textContent='Continuar';setTimeout(loadSavedTokens,500);
 }
 function updateUsageUI(){
   const u=S.usage;const limit=u.unlimited?999:u.limit;
@@ -562,16 +562,44 @@ async function testTok(type){
     else if(type==='ai'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':val},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'hi'}]})});if(r.ok){dot.className='sdot ok';alert('✓ API válida')}else{dot.className='sdot err';alert('Key inválida')}}
   }catch(e){dot.className='sdot err';alert('Error: '+e.message)}
 }
-function saveSettings(){
-  localStorage.setItem('dai_gh',document.getElementById('tok-gh').value);
-  localStorage.setItem('dai_vc',document.getElementById('tok-vc').value);
-  localStorage.setItem('dai_sb',document.getElementById('tok-sb').value);
-  localStorage.setItem('dai_sburl',document.getElementById('sb-url').value);
-  localStorage.setItem('dai_ai',document.getElementById('tok-ai').value);
-  alert('✓ Tokens guardados permanentemente');
+async function saveSettings(){
+  const gh=document.getElementById('tok-gh').value;
+  const vc=document.getElementById('tok-vc').value;
+  const sb=document.getElementById('tok-sb').value;
+  const sburl=document.getElementById('sb-url').value;
+  const ai=document.getElementById('tok-ai').value;
+  // Save to localStorage as backup
+  if(gh)localStorage.setItem('dai_gh',gh);
+  if(vc)localStorage.setItem('dai_vc',vc);
+  if(sb)localStorage.setItem('dai_sb',sb);
+  if(sburl)localStorage.setItem('dai_sburl',sburl);
+  if(ai)localStorage.setItem('dai_ai',ai);
+  // Save to backend
+  if(S.token){
+    try{
+      await fetch(API+'/tokens',{method:'POST',headers:{Authorization:'Bearer '+S.token,'Content-Type':'application/json'},body:JSON.stringify({ghToken:gh,vcToken:vc,sbToken:sb,sbUrl:sburl,aiToken:ai})});
+      alert('✓ Tokens guardados en tu cuenta');
+    }catch(e){alert('✓ Tokens guardados localmente');}
+  }else{alert('✓ Tokens guardados');}
   dpNav('agent',document.querySelectorAll('.dsb-item')[1]);
 }
-function loadSavedTokens(){
+async function loadSavedTokens(){
+  // Load from backend first
+  if(S.token){
+    try{
+      const r=await fetch(API+'/tokens',{headers:{Authorization:'Bearer '+S.token}});
+      if(r.ok){
+        const d=await r.json();
+        if(d.ghToken)document.getElementById('tok-gh').value=d.ghToken;
+        if(d.vcToken)document.getElementById('tok-vc').value=d.vcToken;
+        if(d.sbToken)document.getElementById('tok-sb').value=d.sbToken;
+        if(d.sbUrl)document.getElementById('sb-url').value=d.sbUrl;
+        if(d.aiToken)document.getElementById('tok-ai').value=d.aiToken;
+        return;
+      }
+    }catch(e){}
+  }
+  // Fallback to localStorage
   const gh=localStorage.getItem('dai_gh');const vc=localStorage.getItem('dai_vc');
   const sb=localStorage.getItem('dai_sb');const sburl=localStorage.getItem('dai_sburl');
   const ai=localStorage.getItem('dai_ai');
@@ -611,11 +639,11 @@ async function runAgent(){
   btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Ejecutando...';
   document.getElementById('log-box').innerHTML='';document.getElementById('result-area').innerHTML='';
   skReset();snReset();S.docs={};
-  const ghTok=localStorage.getItem('dai_gh')||document.getElementById('tok-gh').value;
-  const vcTok=localStorage.getItem('dai_vc')||document.getElementById('tok-vc').value;
-  const sbTok=localStorage.getItem('dai_sb')||document.getElementById('tok-sb').value;
-  const sbUrl=(localStorage.getItem('dai_sburl')||document.getElementById('sb-url').value||'').replace(/\/$/,'');
-  const aiTok=localStorage.getItem('dai_ai')||document.getElementById('tok-ai').value;
+  const ghTok=document.getElementById('tok-gh').value||localStorage.getItem('dai_gh')||'';
+  const vcTok=document.getElementById('tok-vc').value||localStorage.getItem('dai_vc')||'';
+  const sbTok=document.getElementById('tok-sb').value||localStorage.getItem('dai_sb')||'';
+  const sbUrl=(document.getElementById('sb-url').value||localStorage.getItem('dai_sburl')||'').replace(/\/$/,'');
+  const aiTok=document.getElementById('tok-ai').value||localStorage.getItem('dai_ai')||'';
   log('Agente iniciado','info');log('"'+prompt.slice(0,70)+'"');
   await sleep(300);
   if(S.token){try{const r=await fetch(API+'/deploys/usage',{headers:{Authorization:'Bearer '+S.token}});const d=await r.json();S.usage=d;updateUsageUI();if(!d.unlimited&&d.used>=d.limit){log('Límite del plan alcanzado','err');btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';return;}}catch(e){}}
