@@ -650,6 +650,7 @@ async function runAgent(){
   const sbUrl=(document.getElementById('sb-url').value||localStorage.getItem('dai_sburl')||'').replace(/\/$/,'');
   const aiTok=document.getElementById('tok-ai').value||localStorage.getItem('dai_ai')||'';
   log('Agente iniciado','info');log('"'+prompt.slice(0,70)+'"');
+  if(!S.token){S.token=localStorage.getItem('dai_jwt');}
   await sleep(300);
   if(S.token){try{const r=await fetch(API+'/deploys/usage',{headers:{Authorization:'Bearer '+S.token}});const d=await r.json();S.usage=d;updateUsageUI();if(!d.unlimited&&d.used>=d.limit){log('Límite del plan alcanzado','err');btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';return;}}catch(e){}}
   snR(1,'r');skOn('ai');log('Generando código con IA...','ai');
