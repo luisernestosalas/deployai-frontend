@@ -500,6 +500,7 @@ async function doAuth(){
     const d=await r.json();
     if(!r.ok){errEl.textContent=d.error||'Error al conectar';btn.disabled=false;btn.textContent='Continuar';return}
     S.token=d.token;S.user=d.user;
+    localStorage.setItem("dai_jwt",d.token);
     await loadUsage();enterDash();
   }catch(e){errEl.textContent='Error de conexión: '+e.message;btn.disabled=false;btn.textContent='Continuar';}
 }
@@ -527,7 +528,7 @@ function updateUsageUI(){
   if(!u.unlimited&&u.used>=u.limit){banner.style.display='flex';document.getElementById('go-btn').disabled=true;}
   else{banner.style.display='none';document.getElementById('go-btn').disabled=false;}
 }
-function logout(){S.user=null;S.token=null;show('s-landing')}
+function logout(){S.user=null;S.token=null;localStorage.removeItem('dai_jwt');show('s-landing')}
 function dpNav(id,el){
   if(id==='settings'){setTimeout(loadSavedTokens,50);}
   document.querySelectorAll('.dsb-item').forEach(i=>i.classList.remove('active'));
@@ -742,6 +743,21 @@ async function runAgent(){
   ra.innerHTML=html;
   btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';
 }
+// Auto-login and load tokens on page load
+window.addEventListener('load',async function(){
+  const jwt=localStorage.getItem('dai_jwt');
+  if(jwt){
+    try{
+      const r=await fetch('https://deployai-backend-tcw6.onrender.com/auth/me',{headers:{Authorization:'Bearer '+jwt}});
+      if(r.ok){
+        const d=await r.json();
+        S.token=jwt;S.user=d;
+        await loadUsage();
+        enterDash();
+      }else{localStorage.removeItem('dai_jwt');}
+    }catch(e){}
+  }
+});
 </script>
 </body>
 </html>
