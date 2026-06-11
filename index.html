@@ -213,7 +213,6 @@ footer{padding:32px 48px;border-top:1px solid var(--border);display:flex;justify
 </style>
 </head>
 <body>
-
 <div id="s-landing" class="screen active">
   <nav class="nav">
     <div class="nav-logo">Deploy<span>AI</span></div>
@@ -247,39 +246,13 @@ footer{padding:32px 48px;border-top:1px solid var(--border);display:flex;justify
     <div class="sec-label">Planes</div>
     <div class="sec-title">Empieza gratis, escala cuando quieras</div>
     <div class="plan-grid">
-      <div class="plan">
-        <div class="plan-name">Starter</div>
-        <div class="plan-price">$0<span>/mes</span></div>
-        <div class="plan-limit">3 deploys al mes</div>
-        <div class="plan-feat">Deploy automático</div>
-        <div class="plan-feat">Documentación generada</div>
-        <div class="plan-feat">URL demo .vercel.app</div>
-        <button class="btn btn-ghost plan-btn" onclick="goAuth('register')">Empezar gratis</button>
-      </div>
-      <div class="plan popular">
-        <div class="plan-pop">Más popular</div>
-        <div class="plan-name">Pro</div>
-        <div class="plan-price">$29<span>/mes</span></div>
-        <div class="plan-limit">20 deploys al mes</div>
-        <div class="plan-feat">Todo lo de Starter</div>
-        <div class="plan-feat">Propuesta comercial</div>
-        <div class="plan-feat">Soporte prioritario</div>
-        <button class="btn btn-accent plan-btn" onclick="goAuth('register')">Empezar con Pro</button>
-      </div>
-      <div class="plan">
-        <div class="plan-name">Team</div>
-        <div class="plan-price">$99<span>/mes</span></div>
-        <div class="plan-limit">Deploys ilimitados</div>
-        <div class="plan-feat">Todo lo de Pro</div>
-        <div class="plan-feat">Hasta 5 usuarios</div>
-        <div class="plan-feat">Workspace compartido</div>
-        <button class="btn btn-ghost plan-btn" onclick="goAuth('register')">Contactar ventas</button>
-      </div>
+      <div class="plan"><div class="plan-name">Starter</div><div class="plan-price">$0<span>/mes</span></div><div class="plan-limit">3 deploys al mes</div><div class="plan-feat">Deploy automático</div><div class="plan-feat">Documentación generada</div><div class="plan-feat">URL demo .vercel.app</div><button class="btn btn-ghost plan-btn" onclick="goAuth('register')">Empezar gratis</button></div>
+      <div class="plan popular"><div class="plan-pop">Más popular</div><div class="plan-name">Pro</div><div class="plan-price">$29<span>/mes</span></div><div class="plan-limit">20 deploys al mes</div><div class="plan-feat">Todo lo de Starter</div><div class="plan-feat">Propuesta comercial</div><div class="plan-feat">Soporte prioritario</div><button class="btn btn-accent plan-btn" onclick="goAuth('register')">Empezar con Pro</button></div>
+      <div class="plan"><div class="plan-name">Team</div><div class="plan-price">$99<span>/mes</span></div><div class="plan-limit">Deploys ilimitados</div><div class="plan-feat">Todo lo de Pro</div><div class="plan-feat">Hasta 5 usuarios</div><div class="plan-feat">Workspace compartido</div><button class="btn btn-ghost plan-btn" onclick="goAuth('register')">Contactar ventas</button></div>
     </div>
   </div>
   <footer><div class="footer-copy">© 2026 DeployAI · Todos los derechos reservados</div></footer>
 </div>
-
 <div id="s-auth" class="screen">
   <div class="auth-box">
     <div class="auth-logo">Deploy<span>AI</span></div>
@@ -309,7 +282,6 @@ footer{padding:32px 48px;border-top:1px solid var(--border);display:flex;justify
     <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px;cursor:pointer" onclick="show('s-landing')">← Volver al inicio</p>
   </div>
 </div>
-
 <div id="s-dash" class="screen">
   <div class="dsb">
     <div class="dsb-top">
@@ -350,11 +322,7 @@ footer{padding:32px 48px;border-top:1px solid var(--border);display:flex;justify
     <div id="dp-agent" class="dpanel">
       <div class="dph"><div class="dph-title">Agente de deploy</div><div class="dph-sub">Describe tu app — el resto es automático</div></div>
       <div class="dpb" style="display:flex;flex-direction:column;height:100%">
-        <div id="limit-banner" style="display:none" class="limit-banner">
-          <i class="ti ti-alert-circle"></i>
-          <span id="limit-msg">Alcanzaste el límite de tu plan.</span>
-          <button onclick="dpNav('billing',document.querySelectorAll('.dsb-item')[3])">Actualizar plan</button>
-        </div>
+        <div id="limit-banner" style="display:none" class="limit-banner"><i class="ti ti-alert-circle"></i><span id="limit-msg">Alcanzaste el límite de tu plan.</span><button onclick="dpNav('billing',document.querySelectorAll('.dsb-item')[3])">Actualizar plan</button></div>
         <div class="ag-layout">
           <div class="ag-main">
             <div class="card">
@@ -421,46 +389,21 @@ footer{padding:32px 48px;border-top:1px solid var(--border);display:flex;justify
     <div id="dp-settings" class="dpanel">
       <div class="dph"><div class="dph-title">Tokens de acceso</div><div class="dph-sub">Solo viven en tu navegador</div></div>
       <div class="dpb">
-        <div class="sett-card">
-          <div class="sett-head"><div class="sett-ico gh"><i class="ti ti-brand-github"></i></div><div><div class="sett-lbl">GitHub <span class="sdot" id="dot-gh"></span></div><div class="sett-hint">Crea repos y sube código</div></div></div>
-          <div class="sett-row"><input type="password" id="tok-gh" class="sett-inp" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('gh')">Verificar</button></div>
-          <a href="https://github.com/settings/tokens" class="tok-link" target="_blank">github.com/settings/tokens → repo</a>
-        </div>
-        <div class="sett-card">
-          <div class="sett-head"><div class="sett-ico vc"><i class="ti ti-triangle"></i></div><div><div class="sett-lbl">Vercel <span class="sdot" id="dot-vc"></span></div><div class="sett-hint">Deploy automático</div></div></div>
-          <div class="sett-row"><input type="password" id="tok-vc" class="sett-inp" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('vc')">Verificar</button></div>
-          <a href="https://vercel.com/account/tokens" class="tok-link" target="_blank">vercel.com/account/tokens</a>
-        </div>
-        <div class="sett-card">
-          <div class="sett-head"><div class="sett-ico sb"><i class="ti ti-database"></i></div><div><div class="sett-lbl">Supabase <span class="sdot" id="dot-sb"></span></div><div class="sett-hint">Ejecuta SQL automáticamente</div></div></div>
-          <div class="sett-row" style="margin-bottom:6px"><input type="password" id="tok-sb" class="sett-inp" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV..."><button class="test-btn" onclick="testTok('sb')">Verificar</button></div>
-          <div class="sett-row"><input type="text" id="sb-url" class="sett-inp url" placeholder="https://xyzxyz.supabase.co"></div>
-          <a href="https://app.supabase.com" class="tok-link" target="_blank">Supabase → Settings → API</a>
-        </div>
-        <div class="sett-card">
-          <div class="sett-head"><div class="sett-ico ai"><i class="ti ti-sparkles"></i></div><div><div class="sett-lbl">Anthropic API <span class="sdot" id="dot-ai"></span></div><div class="sett-hint">Genera código</div></div></div>
-          <div class="sett-row"><input type="password" id="tok-ai" class="sett-inp" placeholder="sk-ant-xxxxxxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('ai')">Verificar</button></div>
-          <a href="https://console.anthropic.com/keys" class="tok-link" target="_blank">console.anthropic.com/keys</a>
-        </div>
+        <div class="sett-card"><div class="sett-head"><div class="sett-ico gh"><i class="ti ti-brand-github"></i></div><div><div class="sett-lbl">GitHub <span class="sdot" id="dot-gh"></span></div><div class="sett-hint">Crea repos y sube código</div></div></div><div class="sett-row"><input type="password" id="tok-gh" class="sett-inp" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('gh')">Verificar</button></div><a href="https://github.com/settings/tokens" class="tok-link" target="_blank">github.com/settings/tokens → repo</a></div>
+        <div class="sett-card"><div class="sett-head"><div class="sett-ico vc"><i class="ti ti-triangle"></i></div><div><div class="sett-lbl">Vercel <span class="sdot" id="dot-vc"></span></div><div class="sett-hint">Deploy automático</div></div></div><div class="sett-row"><input type="password" id="tok-vc" class="sett-inp" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('vc')">Verificar</button></div><a href="https://vercel.com/account/tokens" class="tok-link" target="_blank">vercel.com/account/tokens</a></div>
+        <div class="sett-card"><div class="sett-head"><div class="sett-ico sb"><i class="ti ti-database"></i></div><div><div class="sett-lbl">Supabase <span class="sdot" id="dot-sb"></span></div><div class="sett-hint">Ejecuta SQL automáticamente</div></div></div><div class="sett-row" style="margin-bottom:6px"><input type="password" id="tok-sb" class="sett-inp" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV..."><button class="test-btn" onclick="testTok('sb')">Verificar</button></div><div class="sett-row"><input type="text" id="sb-url" class="sett-inp url" placeholder="https://xyzxyz.supabase.co"></div><a href="https://app.supabase.com" class="tok-link" target="_blank">Supabase → Settings → API</a></div>
+        <div class="sett-card"><div class="sett-head"><div class="sett-ico ai"><i class="ti ti-sparkles"></i></div><div><div class="sett-lbl">Anthropic API <span class="sdot" id="dot-ai"></span></div><div class="sett-hint">Genera código</div></div></div><div class="sett-row"><input type="password" id="tok-ai" class="sett-inp" placeholder="sk-ant-xxxxxxxxxxxxxxxxxxxxxxxx"><button class="test-btn" onclick="testTok('ai')">Verificar</button></div><a href="https://console.anthropic.com/keys" class="tok-link" target="_blank">console.anthropic.com/keys</a></div>
         <button class="save-sett" onclick="saveSettings()">Guardar tokens</button>
       </div>
     </div>
   </div>
 </div>
-
 <div id="doc-modal" style="display:none" class="modal-overlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title" id="modal-title">Documento</div>
-      <div style="display:flex;gap:7px">
-        <button class="test-btn" onclick="copyModal()"><i class="ti ti-copy"></i> Copiar</button>
-        <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
-      </div>
-    </div>
+    <div class="modal-head"><div class="modal-title" id="modal-title">Documento</div><div style="display:flex;gap:7px"><button class="test-btn" onclick="copyModal()"><i class="ti ti-copy"></i> Copiar</button><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div></div>
     <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
-
 <script>
 const API='https://deployai-backend-tcw6.onrender.com';
 const PLANS={FREE:{name:'Starter',limit:3},PRO:{name:'Pro',limit:20},TEAM:{name:'Team',limit:999}};
@@ -569,13 +512,11 @@ async function saveSettings(){
   const sb=document.getElementById('tok-sb').value;
   const sburl=document.getElementById('sb-url').value;
   const ai=document.getElementById('tok-ai').value;
-  // Save to localStorage as backup
   if(gh)localStorage.setItem('dai_gh',gh);
   if(vc)localStorage.setItem('dai_vc',vc);
   if(sb)localStorage.setItem('dai_sb',sb);
   if(sburl)localStorage.setItem('dai_sburl',sburl);
   if(ai)localStorage.setItem('dai_ai',ai);
-  // Save to backend
   if(S.token){
     try{
       await fetch(API+'/tokens',{method:'POST',headers:{Authorization:'Bearer '+S.token,'Content-Type':'application/json'},body:JSON.stringify({ghToken:gh,vcToken:vc,sbToken:sb,sbUrl:sburl,aiToken:ai})});
@@ -585,7 +526,6 @@ async function saveSettings(){
   dpNav('agent',document.querySelectorAll('.dsb-item')[1]);
 }
 async function loadSavedTokens(){
-  // Load from backend first
   if(S.token){
     try{
       const r=await fetch(API+'/tokens',{headers:{Authorization:'Bearer '+S.token}});
@@ -600,7 +540,6 @@ async function loadSavedTokens(){
       }
     }catch(e){}
   }
-  // Fallback to localStorage
   const gh=localStorage.getItem('dai_gh');const vc=localStorage.getItem('dai_vc');
   const sb=localStorage.getItem('dai_sb');const sburl=localStorage.getItem('dai_sburl');
   const ai=localStorage.getItem('dai_ai');
@@ -619,25 +558,22 @@ async function upgradePlan(plan){
     else{alert(d.error||'Configura STRIPE_SECRET_KEY en Render para activar pagos')}
   }catch(e){alert('Error: '+e.message)}
 }
-(sys,msg,tok,max=800){
-  const jwtasync function callAI=S.token||localStorage.getItem('dai_jwt');
+async function callAI(sys,msg,tok,max=800){
+  const jwt=S.token||localStorage.getItem('dai_jwt');
   if(jwt){
     try{
       const r=await fetch(API+'/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+jwt,'Content-Type':'application/json'},body:JSON.stringify({system:sys,message:msg,max_tokens:max})});
       if(r.ok){
         const d=await r.json();
         const text=(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json\n?|```/g,'').trim();
-      
+        if(text&&text.length>10)return text;
+      }
+    }catch(e){console.log('Backend AI failed:',e);}
+  }
   const h={'Content-Type':'application/json'};if(tok&&tok.length>8)h['x-api-key']=tok;
   const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:h,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,system:sys,messages:[{role:'user',content:msg}]})});
   const d=await r.json();
   return(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json\n?|```/g,'').trim();
-}
-  // Fallback: direct call with user's key
-  const h={'Content-Type':'application/json'};if(tok&&tok.length>8)h['x-api-key']=tok;
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:h,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,system:sys,messages:[{role:'user',content:msg}]})});
-  const d=await r.json();
-  return(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
 }
 async function runAgent(){
   const prompt=document.getElementById('prompt-input').value.trim();if(!prompt)return;
@@ -749,18 +685,13 @@ async function runAgent(){
   ra.innerHTML=html;
   btn.disabled=false;btn.innerHTML='<i class="ti ti-player-play"></i> Deploy + documentación completa';
 }
-// Auto-login and load tokens on page load
 window.addEventListener('load',async function(){
   const jwt=localStorage.getItem('dai_jwt');
   if(jwt){
     try{
       const r=await fetch('https://deployai-backend-tcw6.onrender.com/auth/me',{headers:{Authorization:'Bearer '+jwt}});
-      if(r.ok){
-        const d=await r.json();
-        S.token=jwt;S.user=d;
-        await loadUsage();
-        enterDash();
-      }else{localStorage.removeItem('dai_jwt');}
+      if(r.ok){const d=await r.json();S.token=jwt;S.user=d;await loadUsage();enterDash();}
+      else{localStorage.removeItem('dai_jwt');}
     }catch(e){}
   }
 });
