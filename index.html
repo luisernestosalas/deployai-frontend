@@ -619,27 +619,15 @@ async function upgradePlan(plan){
     else{alert(d.error||'Configura STRIPE_SECRET_KEY en Render para activar pagos')}
   }catch(e){alert('Error: '+e.message)}
 }
-async function callAI(sys,msg,tok,max=800){
-  const jwt=S.token||localStorage.getItem('dai_jwt');
+(sys,msg,tok,max=800){
+  const jwtasync function callAI=S.token||localStorage.getItem('dai_jwt');
   if(jwt){
     try{
       const r=await fetch(API+'/ai/generate',{method:'POST',headers:{Authorization:'Bearer '+jwt,'Content-Type':'application/json'},body:JSON.stringify({system:sys,message:msg,max_tokens:max})});
       if(r.ok){
         const d=await r.json();
         const text=(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json\n?|```/g,'').trim();
-        if(text&&text.length>10)return text;
-      }
-    }catch(e){console.log('Backend AI failed:',e);}
-  }
-  const h={'Content-Type':'application/json'};if(tok&&tok.length>8)h['x-api-key']=tok;
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:h,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,system:sys,messages:[{role:'user',content:msg}]})});
-  const d=await r.json();
-  return(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json\n?|```/g,'').trim();
-}
-        if(text&&text.length>10)return text;
-      }
-    }catch(e){console.log('Backend AI failed:',e);}
-  }
+      
   const h={'Content-Type':'application/json'};if(tok&&tok.length>8)h['x-api-key']=tok;
   const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:h,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,system:sys,messages:[{role:'user',content:msg}]})});
   const d=await r.json();
